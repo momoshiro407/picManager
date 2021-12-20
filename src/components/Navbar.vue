@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 import getUser from '@/composables/getUser'
 import useLogout from '@/composables/useLogout'
