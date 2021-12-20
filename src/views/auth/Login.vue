@@ -14,7 +14,7 @@
   </form>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from "@vue/runtime-core"
 import useLogin from '@/composables/useLogin'
 import { useRouter } from 'vue-router'
