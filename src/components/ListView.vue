@@ -1,37 +1,65 @@
 <template>
-  <div class="thumbnail-list">
-    <div class="thumbnail" v-for="image in dummyImages" :key="image.index">
+  <div class="thumbnail-container">
+    <div class="thumbnail" v-for="(url, index) in displayImages" :key="index">
       <router-link :to="{ name: 'Home' }">
-        <img :src="image.url">
+        <img :src="url">
       </router-link>
     </div>
   </div>
+  <div>
+    <Pagination
+      :total="dummyImages.length"
+      :imagesPerPage="imagesPerPage"
+      :displayRange="displayRange"
+      @currentPage="updateCurrentPage($event)"
+    />
+  </div>
 </template>
 
-<script>
-import { defineComponent } from '@vue/runtime-core'
+<script lang="ts">
+import { ref } from 'vue'
+import { computed, defineComponent } from '@vue/runtime-core'
+import Pagination from '@/components/Pagination.vue'
 
 export default defineComponent({
+  components: { Pagination },
   setup() {
     // FirebaseStrageと連携する前の確認用ダミー画像データ
-    const dummyImages = [
-      { index: 0, url: require('@/assets/image/gardenia2.jpeg') },
-      { index: 1, url: require('@/assets/image/roserade2.jpg') },
-      { index: 2, url: require('@/assets/image/koara.jpg') },
-      { index: 3, url: require('@/assets/image/gardenia.jpeg') },
-      { index: 4, url: require('@/assets/image/roserade3.jpeg') },
-      { index: 5, url: require('@/assets/image/シャーレとディアラ.png') }
+    const imageSet = [
+      require('@/assets/image/green.jpg'),
+      require('@/assets/image/red.jpg'),
+      require('@/assets/image/blue.jpg'),
     ]
+    // 三種類の画像をランダムに選んで配列に格納する
+    const dummyImages = new Array(103).fill(null).map(() => imageSet[Math.floor(Math.random() * 3)])
     
-    return { dummyImages }
+    // ページング関係のパラメータ
+    const currentPage = ref(1) // 現在の表示ページの番号（初期は1）
+    const imagesPerPage = 20 // 1ページあたりの画像の表示件数
+    const displayRange = 9 // ページ番号ボタンの最大表示数
+
+    const updateCurrentPage = (page: number) => {
+        currentPage.value = page
+    }
+
+    // 現在のページに表示する画像だけを抽出する
+    const displayImages = computed(() => {
+      const startIndex = (currentPage.value - 1) * imagesPerPage
+      const endIndex = startIndex + imagesPerPage
+      return dummyImages.slice(startIndex, endIndex)
+    })
+    
+    return { dummyImages, currentPage, imagesPerPage, displayRange, updateCurrentPage, displayImages }
   }
 })
 </script>
 
 <style scoped>
-  .thumbnail-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  .thumbnail-container {
+    display: flex;
+    flex-wrap: wrap;
+    /* display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); */
   }
   .thumbnail {
     display: flex;
