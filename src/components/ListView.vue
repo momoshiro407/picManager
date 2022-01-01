@@ -1,14 +1,14 @@
 <template>
   <div class="thumbnail-container">
-    <div class="thumbnail" v-for="(url, index) in displayImages" :key="index">
+    <div class="thumbnail" v-for="(container, index) in displayContainers" :key="index">
       <router-link :to="{ name: 'Home' }">
-        <img :src="url">
+        <img :src="container.url">
       </router-link>
     </div>
   </div>
-  <div>
+  <div v-if="showPagination">
     <Pagination
-      :total="dummyImages.length"
+      :total="containers.length"
       :imagesPerPage="imagesPerPage"
       :displayRange="displayRange"
       @currentPage="updateCurrentPage($event)"
@@ -20,18 +20,12 @@
 import { ref } from 'vue'
 import { computed, defineComponent } from '@vue/runtime-core'
 import Pagination from '@/components/Pagination.vue'
+import getCollection from '@/composables/getCollection'
 
 export default defineComponent({
   components: { Pagination },
   setup() {
-    // FirebaseStrageと連携する前の確認用ダミー画像データ
-    const imageSet = [
-      require('@/assets/image/green.jpg'),
-      require('@/assets/image/red.jpg'),
-      require('@/assets/image/blue.jpg'),
-    ]
-    // 三種類の画像をランダムに選んで配列に格納する
-    const dummyImages = new Array(103).fill(null).map(() => imageSet[Math.floor(Math.random() * 3)])
+    const { documents: containers } = getCollection('containers')
     
     // ページング関係のパラメータ
     const currentPage = ref(1) // 現在の表示ページの番号（初期は1）
@@ -42,14 +36,19 @@ export default defineComponent({
         currentPage.value = page
     }
 
+    // ページングエリアの表示制御
+    const showPagination = computed(() => {
+      return containers.value.length !== 0
+    })
+
     // 現在のページに表示する画像だけを抽出する
-    const displayImages = computed(() => {
+    const displayContainers = computed(() => {
       const startIndex = (currentPage.value - 1) * imagesPerPage
       const endIndex = startIndex + imagesPerPage
-      return dummyImages.slice(startIndex, endIndex)
+      return containers.value.slice(startIndex, endIndex)
     })
     
-    return { dummyImages, currentPage, imagesPerPage, displayRange, updateCurrentPage, displayImages }
+    return { imagesPerPage, displayRange, updateCurrentPage, showPagination, displayContainers, containers }
   }
 })
 </script>

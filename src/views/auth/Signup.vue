@@ -1,20 +1,20 @@
 <template>
   <form @submit.prevent="handleSubmit">
-    <h2>Sign up</h2>
+    <h2>ユーザ登録</h2>
     <div class="form-group">
-      <label for="name">User name</label>
+      <label for="name">ユーザ名</label>
       <input required type="text" id="name" v-model="name">
     </div>
     <div class="form-group">
-      <label for="email">Mail address</label>
+      <label for="email">メールアドレス</label>
       <input required type="text" id="email" v-model="email">
     </div>
     <div class="form-group">
-      <label for="password">Password</label>
+      <label for="password">パスワード</label>
       <input required type="password" id="password" v-model="password">
     </div>
     <div v-if="error" class="error">{{ error }}</div>
-    <button>Sign up</button>
+    <button>登録</button>
   </form>
 </template>
 

@@ -5,11 +5,12 @@
       <div class="links">
         <div v-if="user">
           <span>{{ user.displayName }}</span>
-          <a class="btn" @click="handleClick">Log out</a>
+          <router-link class="btn" :to="{ name: 'AddContainers' }">画像アップロード</router-link>
+          <a class="btn" @click="handleClick">ログアウト</a>
         </div>
         <div v-else>
-          <router-link v-if="!user" class="btn" :to="{ name: 'Signup' }">Sign up</router-link>
-          <router-link v-if="!user" class="btn" :to="{ name: 'Login' }">Log in</router-link>
+          <router-link v-if="!user" class="btn" :to="{ name: 'Signup' }">ユーザ登録</router-link>
+          <router-link v-if="!user" class="btn" :to="{ name: 'Login' }">ログイン</router-link>
         </div>
       </div>
     </nav>
