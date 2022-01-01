@@ -36,37 +36,40 @@ export default defineComponent ({
     displayRange: {
       required: true,
       type: Number
-    }
+    },
   },
   emits: ['currentPage'],
   setup(props, context) {
-    // 1から始まるページ番号を要素として持つ配列を作成する
-    const pages = new Array(Math.ceil(props.total / props.imagesPerPage)).fill(null).map((e, i) => i + 1)
     const currentPage = ref(1)
     const isLowerEnd = ref(false) // 先頭のページを表示しているかどうか
     const isUpperEnd = ref(false) // 最後のページを表示しているかどうか
+
+    // 1から始まるページ番号を要素として持つ配列を作成する
+    const pages = computed(() => {
+      return new Array(Math.ceil(props.total / props.imagesPerPage)).fill(null).map((e, i) => i + 1)
+    })
 
     // ページ番号ボタンの表示制御
     const displayPages = computed(() => {
       // <<, <, >, >>ボタンの表示制御フラグの更新
       isLowerEnd.value = currentPage.value === 1
-      isUpperEnd.value = currentPage.value === pages.length
+      isUpperEnd.value = currentPage.value === pages.value.length
       
       // 最大でdisplayRange個のページ番号ボタンを表示する
-      if (pages.length > props.displayRange) {
+      if (pages.value.length > props.displayRange) {
         let lowerIndex = currentPage.value - Math.floor(props.displayRange / 2) - 1
         let upperIndex = currentPage.value + Math.floor(props.displayRange / 2) - 1
         if (lowerIndex <= 0) {
           lowerIndex = 0
           upperIndex = lowerIndex + props.displayRange - 1
         }
-        if (upperIndex >= pages.length - 1) {
-          upperIndex = pages.length - 1
+        if (upperIndex >= pages.value.length - 1) {
+          upperIndex = pages.value.length - 1
           lowerIndex = upperIndex - props.displayRange + 1
         }
-        return pages.slice(lowerIndex, upperIndex + 1)
+        return pages.value.slice(lowerIndex, upperIndex + 1)
       } else {
-        return pages
+        return pages.value
       }
     })
 
@@ -79,7 +82,7 @@ export default defineComponent ({
 
     // 選択中のページ番号でcurrentPageを更新し、親コンポーネントに選択ページ番号の情報を送る
     const setCurrentPage = (page: number) => {
-      if (page >= 1 && page <= pages.length ) {
+      if (page >= 1 && page <= pages.value.length ) {
         currentPage.value = page
         context.emit('currentPage', page)
       }

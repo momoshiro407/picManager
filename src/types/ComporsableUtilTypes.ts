@@ -1,5 +1,6 @@
 import { Ref } from 'vue'
 import firebase from 'firebase/compat'
+import PictureContainer from './PictureContainer'
 
 type BaseUtilType = {
   error: Ref<string | boolean | null>
@@ -19,4 +20,18 @@ export type LogoutUtilType = BaseUtilType & {
 
 export type GetUserUtilType =  {
   user: Ref<firebase.User | null>
+}
+
+export type GetCollectionUtilType = BaseUtilType & {
+  documents: Ref<PictureContainer[]>
+}
+
+export type UseDocumentUtilType = BaseUtilType & {
+  addDoc: (doc: PictureContainer) => Promise<void>
+}
+
+export type UseStorageUtilType = BaseUtilType & {
+  url: Ref<string>,
+  filePath: Ref<string>,
+  uploadPicture: (file: File) => Promise<void>
 }

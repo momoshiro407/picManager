@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized
 import Home from '../views/Home.vue'
 import Login from '../views/auth/Login.vue'
 import Signup from '../views/auth/Signup.vue'
+import AddContainers from '../views/picture/AddContainers.vue'
 
 // route guard
 import { auth } from '../firebase/config'
@@ -31,6 +32,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/signup',
     name: 'Signup',
     component: Signup
+  },
+  {
+    path: '/add',
+    name: 'AddContainers',
+    component: AddContainers,
+    beforeEnter: requireAuth
   },
 ]
 
