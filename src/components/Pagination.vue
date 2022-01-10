@@ -41,33 +41,33 @@ export default defineComponent ({
   emits: ['currentPage'],
   setup(props, context) {
     const currentPage = ref(1)
-    const isLowerEnd = ref(false) // 先頭のページを表示しているかどうか
-    const isUpperEnd = ref(false) // 最後のページを表示しているかどうか
 
     // 1から始まるページ番号を要素として持つ配列を作成する
     const pages = computed(() => {
       return new Array(Math.ceil(props.total / props.imagesPerPage)).fill(null).map((e, i) => i + 1)
     })
 
+    // ページ送りボタン（<<, <, >, >>）の表示制御フラグ
+    const isLowerEnd = computed(() => {
+      return currentPage.value === 1
+    })
+    const isUpperEnd = computed(() => {
+      return currentPage.value === pages.value.length
+    })
+
     // ページ番号ボタンの表示制御
     const displayPages = computed(() => {
-      // <<, <, >, >>ボタンの表示制御フラグの更新
-      isLowerEnd.value = currentPage.value === 1
-      isUpperEnd.value = currentPage.value === pages.value.length
-      
       // 最大でdisplayRange個のページ番号ボタンを表示する
       if (pages.value.length > props.displayRange) {
         let lowerIndex = currentPage.value - Math.floor(props.displayRange / 2) - 1
         let upperIndex = currentPage.value + Math.floor(props.displayRange / 2) - 1
-        if (lowerIndex <= 0) {
+        if (lowerIndex < 0) {
           lowerIndex = 0
-          upperIndex = lowerIndex + props.displayRange - 1
         }
-        if (upperIndex >= pages.value.length - 1) {
-          upperIndex = pages.value.length - 1
-          lowerIndex = upperIndex - props.displayRange + 1
+        if (upperIndex > pages.value.length - 1) {
+          lowerIndex = pages.value.length - props.displayRange
         }
-        return pages.value.slice(lowerIndex, upperIndex + 1)
+        return pages.value.slice(0, pages.value.length).splice(lowerIndex, props.displayRange)
       } else {
         return pages.value
       }
